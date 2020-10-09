@@ -69,7 +69,7 @@ while cap.isOpened():
         MotionAllert='Car Movement Please contact the hunter/check sensor for the specific parking street';
         outallert='Watch-out! Car geting out parking spot';
         inallert='Watch-out! Car enter the parking spot!';
-        spot1='parking Spots1 number 1 caught'
+        spot1='Allert:"Hovevi Chion street": parking Spots number 1 caught'
         if (x>0 and x<50) and (y>154 and y<471):
             print(inallert)
             Entrparking=True;
@@ -86,7 +86,7 @@ while cap.isOpened():
               cv2.putText(frame1, "Status: {}".format('Parking spot num 1 caught'), (10, 100),
                             cv2.FONT_HERSHEY_SIMPLEX,
                              0.6, (0, 0, 255), 1)
-  #          Whatappmassagefunction(outallert)
+            #Whatappmassagefunction(spot1)
 
         if (x>500 and x<600) and (y>400 and y<500):
             print(outallert)
@@ -96,7 +96,7 @@ while cap.isOpened():
              cv2.putText(frame1, "Status: {}".format('Car going out from parking spot'), (10, 80), cv2.FONT_HERSHEY_SIMPLEX,
                         1, (0, 0, 255), 3)
              Exitparking=True;
-#            Whatappmassagefunction(inallert)
+#            Whatappmassagefunction(outallert)
 
         #Whatappmassagefunction(allert);
     #cv2.drawContours(frame1, contours, -1, (0, 255, 0), 2)
