@@ -28,7 +28,8 @@ frame_height =int( cap.get( cv2.CAP_PROP_FRAME_HEIGHT))
 
 fourcc = cv2.VideoWriter_fourcc('X','V','I','D')
 
-out = cv2.VideoWriter("output.avi", fourcc, 5.0, (1280,720))
+out = cv2.VideoWriter("output.avi", fourcc, 5.0, (1280,720))#record the output and send it to some path
+
 font = cv2.FONT_HERSHEY_COMPLEX
 ret, frame1 = cap.read()
 ret, frame2 = cap.read()
@@ -44,7 +45,7 @@ while cap.isOpened():
     contours, _ = cv2.findContours(dilated, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
     cv2.putText(frame1, "{}".format('Num of available parking spots:'+ str(avialibalrparkingspot)+''), (10, 20), cv2.FONT_HERSHEY_SIMPLEX,
                 0.6, (0, 0, 255), 1)
-    if avialibalrparkingspot==1:
+    if avialibalrparkingspot==10:
         cv2.putText(frame1, "Status: {}".format('All parking spots available' ),
                     (10, 50), cv2.FONT_HERSHEY_SIMPLEX,
                     0.6, (0, 0, 255), 1)
@@ -66,13 +67,13 @@ while cap.isOpened():
         #cv2.putText(frame1, "Status: {}".format('Movement'), (10, 20), cv2.FONT_HERSHEY_SIMPLEX,
         #            1, (0, 0, 255), 3)
         MotionAllert='Car Movement Please contact the hunter/check sensor for the specific parking street';
-        outallert='Car going out from parking spot';
-        inallert='Car geting in parking spot';
+        outallert='Watch-out! Car geting out parking spot';
+        inallert='Watch-out! Car enter the parking spot!';
         spot1='parking Spots1 number 1 caught'
         if (x>0 and x<50) and (y>154 and y<471):
             print(inallert)
             Entrparking=True;
-            cv2.putText(frame1, "Status: {}".format('Car geting in from parking spot'), (10, 80), cv2.FONT_HERSHEY_SIMPLEX,
+            cv2.putText(frame1, "{}".format('Car enter the parking spot!'), (10, 80), cv2.FONT_HERSHEY_SIMPLEX,
                         0.6, (0, 0, 255),1)
             #counter2 = counter2 + 1;
         #if counter2 < 2:
