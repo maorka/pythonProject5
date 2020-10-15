@@ -1,3 +1,4 @@
+
 from selenium import webdriver
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -6,16 +7,17 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium import webdriver
 import time
+#allert='zc'
 def Whatappmassagefunction(allert):
 
  options = webdriver.ChromeOptions()
  options.add_argument("user-data-dir=C:/Users/מאור קרקוקלי/AppData\Local/Google/Chrome/User Data/Default")
- driver = webdriver.Chrome(executable_path=r'D:/PythonProjects/whatsappmaagse/newfolder/chromedriver', chrome_options=options)
+ driver = webdriver.Chrome(executable_path=r'D:/PythonProjects/whatsappmaagse/newfolder/chromedriver', options=options)
 
  driver.get("https://web.whatsapp.com/")
  wait = WebDriverWait(driver, 600)
 
- # Replace 'Friend's Name' with the name of your friend
+ # Replace 'target' with the name of your friend
  # or the name of a group
  target = '"Test"'
 
@@ -30,9 +32,11 @@ def Whatappmassagefunction(allert):
  input_box = wait.until(EC.presence_of_element_located((
 	By.XPATH, inp_xpath)))
  for i in range(1):
-	 input_box.send_keys('w'+allert + Keys.ENTER)
+
+	 input_box.send_keys('\n'+allert + Keys.ENTER)
 	 time.sleep(1)
 
  return ()
 
 
+#Whatappmassagefunction(allert)
