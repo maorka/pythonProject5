@@ -1,8 +1,8 @@
 import os
 import smtplib
 def MailAllertFunc(mail_allert):
- gmail_user = "maor0525@gmail.com"
- gmail_pwd = "May@5857335"
+ gmail_user = "#####@gmail.com"#Enter user mail
+ gmail_pwd = "######"#Enter user Password
  TO = 'maor0525@gmail.com'
  SUBJECT = "PumbaParkingAllert"
  TEXT = "Parking spot number 1  available at Shalom-Haliechem 32,Keren Hchayedet"
