@@ -1,29 +1,22 @@
 import cv2
 import numpy as np
 
-from selenium import webdriver
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium import webdriver
 import time
 #from Whatsappmassage import Whatappmassagefunction
 from EmailAleert import MailAllertFunc
 #number of constant for calculations
 #EmptyParking=1;
 FullParking=0;
-avialibalrparkingspot=1;#inital number->emptyparking=1=number of all the spots
+avialibalrparkingspot=2;#inital number->emptyparking=1=number of all the spots
 counter_of_frames_leaving_park=0;
-counterof_frames_spot1=0;
-counter3=0;
-counter4=0;
+counterof_frames_spot1_in=0;
+counterof_frames_spot1_out=0;
+counterof_frames_spot2 = 0
 bool("Entrparking");
 Entrparking=False;#iniatializ
 bool("Exitparking");
 
-cap = cv2.VideoCapture('kern-shalom-alichem-day5.mov')#VideoCapture(0)-for camera live
+cap = cv2.VideoCapture('kern-shalom-alichem-day6.mov')#VideoCapture(0)-for camera live
 frame_width = int( cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 
 frame_height =int( cap.get( cv2.CAP_PROP_FRAME_HEIGHT))
@@ -70,44 +63,73 @@ while cap.isOpened():
 
         #cv2.putText(frame1, "Status: {}".format('Movement'), (10, 20), cv2.FONT_HERSHEY_SIMPLEX,
         #            1, (0, 0, 255), 3)
-        outallert='Watch-out! Car geting out/in parking spot';
-        inallert='Watch-out! Car enter/leave the parking spot!';
+        outallert='Watch-out! Car going out the parking spot!';
+        inallert='Watch-out! Car enter the parking spot!';
         spot1Out= 'Allert:"Hovevi Chion street":Car going out, parking Spots number 1 available'
         spot1In= 'Allert:"Hovevi Chion street": parking Spots number 1 caught'
-        if (x>40 and x<100) and (y>60 and y<90):
+        spot2Out = 'Allert:"Hovevi Chion street":Car going out, parking Spots number 2 available'
+        spot2In = 'Allert:"Hovevi Chion street": parking Spots number 2 caught'
+        if (x>40 and x<70) and (y>60 and y<80):
             print(inallert)
             Entrparking=True;
-            cv2.putText(frame1, "{}".format('Car enter/leave the parking spot!'), (10, 80), cv2.FONT_HERSHEY_SIMPLEX,
-                        0.7, (0, 0, 255),1)
+            cv2.putText(frame1, "{}".format('Car enter the parking spot!'), (50, 400), cv2.FONT_HERSHEY_SIMPLEX,
+                        0.7, (0, 0, 255),3)
 
         #Spots number 1 Checking
         # if car enter the parking
-        if (x > 55 and x < 66) and (y >95  and y < 110) and Entrparking==True:
+        if (x > 64 and x < 66) and (y >80  and y < 88) and Entrparking==True:
             print(spot1In)
-            counterof_frames_spot1=0
-            counterof_frames_spot1 = counterof_frames_spot1 + 1;#counter of changes of frames at spot parking
-            if counterof_frames_spot1 < 2:
+            counterof_frames_spot1_in=0
+            counterof_frames_spot1_in = counterof_frames_spot1_in + 1;#counter of changes of frames at spot parking
+            if counterof_frames_spot1_in < 2:
               avialibalrparkingspot = avialibalrparkingspot - 1;
               cv2.putText(frame1, "Status: {}".format('Parking spot num 1 caught'), (10, 100),
                             cv2.FONT_HERSHEY_SIMPLEX,
                              0.7, (0, 0, 255), 1)
 #            Whatappmassagefunction(spot1)
            # MailAllertFunc(spot1In)
-        if (x > 55 and x < 95) and (y >95  and y < 110) and Entrparking == False:
+        #if car leaving the parking spot
+        if (x > 90 and x < 94) and (y >105 and y < 107) :
             print(spot1Out)
             #counterof_frames_spot1=0
-            counterof_frames_spot1 = counterof_frames_spot1 + 1;  # counter of changes of frames at spot parking
-            if counterof_frames_spot1 < 2:
+            counterof_frames_spot1_out = counterof_frames_spot1_out + 1;  # counter of changes of frames at spot parking
+            if counterof_frames_spot1_out < 2:
                 avialibalrparkingspot = avialibalrparkingspot + 1;
                 cv2.putText(frame1, "Status: {}".format('Parking spot num 1 is free to park'), (10, 100),
                                   cv2.FONT_HERSHEY_SIMPLEX,
                                   0.7, (0, 0, 255), 1)
         #            Whatappmassagefunction(spot1)
                 #MailAllertFunc(spot1Out)
-        #if car leaving the parking
-        if (x>420 and x<641) and (y>270 and y<480):
+
+                # Spots number 2 Checking
+                # if car enter the parking
+        if (x > 61 and x < 73) and (y > 70 and y < 73) and Entrparking == True:
+            print(spot2In)
+            counterof_frames_spot2 = counterof_frames_spot2 + 1;  # counter of changes of frames at spot parking
+            if counterof_frames_spot2 < 2:
+                avialibalrparkingspot = avialibalrparkingspot - 1;
+                cv2.putText(frame1, "Status: {}".format('Parking spot num 2 caught!'), (10, 100),
+                            cv2.FONT_HERSHEY_SIMPLEX,
+                            0.7, (0, 0, 255), 1)
+                #            Whatappmassagefunction(spot1)
+                # MailAllertFunc(spot1In)
+        # if car going out the parking
+        if (x > 61 and x < 69) and (y > 70 and y < 73) and Entrparking == False:
+            print(spot2Out)
+            # counterof_frames_spot2=0
+            counterof_frames_spot2 = counterof_frames_spot2 + 1;  # counter of changes of frames at spot parking
+            if counterof_frames_spot2 < 2:
+                    avialibalrparkingspot = avialibalrparkingspot + 1;
+                    cv2.putText(frame1, "Status: {}".format('Parking spot num 2 is free to park'), (10, 100),
+                                    cv2.FONT_HERSHEY_SIMPLEX,
+                                    0.7, (0, 0, 255), 1)
+                #            Whatappmassagefunction(spot1)
+                # MailAllertFunc(spot1Out)
+
+                # if car leaving the parking
+        if (x>420 and x<641) and (y>370 and y<480):
             print(outallert)
-            cv2.putText(frame1, "Status: {}".format('Car going out/in from parking spot'), (10, 80), cv2.FONT_HERSHEY_SIMPLEX,
+            cv2.putText(frame1, "Status: {}".format('Car going out from parking spot'), (50, 400), cv2.FONT_HERSHEY_SIMPLEX,
                         0.8, (0, 0, 255), 3)
             Exitparking=True;
 #           Whatappmassagefunction(outallert)
