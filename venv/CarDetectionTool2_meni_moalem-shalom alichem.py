@@ -1,20 +1,13 @@
 import cv2
 import numpy as np
-
-# from selenium import webdriver
-# from selenium.webdriver.support.ui import WebDriverWait
-# from selenium.webdriver.support import expected_conditions as EC
-# from selenium.webdriver.common.keys import Keys
-# from selenium.webdriver.common.by import By
-# from selenium.webdriver.support.ui import WebDriverWait
-# from selenium import webdriver
 import time
-#from EmailAleert import MailAllertFunc
 #from Whatsappmassage import Whatappmassagefunction
 #number of constant for calculations
 #EmptyParking=1;
 FullParking=0;
+#Need to intial the parking spots every time reset the code
 avialibalrparkingspot=0;#inital number->emptyparking=1=number of all the spots
+
 counter1=0;
 counterofspot1_in=0;
 counterofspot1_out=0;
@@ -32,10 +25,12 @@ counterofspot7_in=0;
 counterofspot7_out=0;
 counterofspot8_in=0;
 counterofspot8_out=0;
+counter3=0;
 counter4=0;
 bool("Entrparking");
 Entrparking=False;#iniatializ
 bool("Exitparking");
+bool("Leavingparking");
 bool("catch_spot_num_1");
 bool("catch_spot_num_2");
 bool("catch_spot_num_3");
@@ -45,9 +40,7 @@ bool("catch_spot_num_6");
 bool("catch_spot_num_7");
 bool("catch_spot_num_8");
 bool("catch_spot_num_9");
-bool("catch_spot_num_10");
-bool("catch_spot_num_11");
-bool("catch_spot_num_12");
+
 #initiliaz catch const as a function of the spots status
 catch_spot_num_1=False;
 catch_spot_num_2=True;
@@ -58,11 +51,8 @@ catch_spot_num_6=False;
 catch_spot_num_7=False;
 catch_spot_num_8=True;
 catch_spot_num_9=False;
-catch_spot_num_10=False;
-catch_spot_num_11=True;
-catch_spot_num_12=False;
 
-cap = cv2.VideoCapture('srkin21_yarden_adom_day.h264')#VideoCapture(0)-for camera live
+cap = cv2.VideoCapture('meni_moalem_2_day.h264')#VideoCapture(0)-for camera live
 frame_width = int( cap.get(cv2.CAP_PROP_FRAME_WIDTH))
 
 frame_height =int( cap.get( cv2.CAP_PROP_FRAME_HEIGHT))
@@ -84,10 +74,10 @@ while cap.isOpened():
     _, thresh = cv2.threshold(blur, 20, 255, cv2.THRESH_BINARY)
     dilated = cv2.dilate(thresh, None, iterations=3)
     contours, _ = cv2.findContours(dilated, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
-    cv2.putText(frame1, "{}".format('Num of available parking spots:'+ str(avialibalrparkingspot)+''), (10, 20), cv2.FONT_HERSHEY_SIMPLEX,
-                0.6, (0, 0, 255), 1)
     if avialibalrparkingspot <= 0:
          avialibalrparkingspot=0
+    cv2.putText(frame1, "{}".format('Num of available parking spots:'+ str(avialibalrparkingspot)+''), (10, 20), cv2.FONT_HERSHEY_SIMPLEX,
+                0.6, (0, 0, 255), 1)
     if avialibalrparkingspot==10:
         cv2.putText(frame1, "Status: {}".format('All parking spots available' ),
                     (10, 50), cv2.FONT_HERSHEY_SIMPLEX,
@@ -109,8 +99,8 @@ while cap.isOpened():
 
         #cv2.putText(frame1, "Status: {}".format('Movement'), (10, 20), cv2.FONT_HERSHEY_SIMPLEX,
         #            1, (0, 0, 255), 3)
-        outallert='Watch-out! Car/s leaving parking lot';
-        inallert='Watch-out! Car/s enter the parking lot!';
+        outallert='Watch-out! Car leaving parking spot!';
+        inallert='Watch-out! Car enter parking spot!';
 
         spot1Out= 'Allert:"Sirkin 21 street": parking Spot number 1 available!'
         spot1In= 'Allert:"Sirkin 21 street": parking Spot number 1 caught!'
@@ -130,57 +120,52 @@ while cap.isOpened():
         spot8In= 'Allert:"Sirkin 21 street": parking Spot number 8 caught!'
         spot9Out= 'Allert:"Sirkin 21 street": parking Spot number 9 available!'
         spot9In= 'Allert:"Sirkin 21 street": parking Spot number 9 caught!'
-        spot10Out= 'Allert:"Sirkin 21 street": parking Spot number 10 available!'
-        spot10In= 'Allert:"Sirkin 21 street": parking Spot number 10 caught!'
-        spot11Out= 'Allert:"Sirkin 21 street": parking Spot number 11 available!'
-        spot11In= 'Allert:"Sirkin 21 street": parking Spot number 11 caught!'
-        spot12Out= 'Allert:"Sirkin 21 street": parking Spot number 12 available!'
-        spot12In= 'Allert:"Sirkin 21 street": parking Spot number 12 caught!'
-        #car enter to parking lot checking
-        if (x>424 and x<434) and (y>60 and y<75):
+
+        if (x>210 and x<248) and (y>-10 and y<18):
             print(inallert)
             Entrparking=True;
             cv2.putText(frame1, "{}".format('Car/s enter the parking spot!'), (50, 400), cv2.FONT_HERSHEY_SIMPLEX,
                         0.6, (0, 0, 255),1)
 
+
         #Spots number 1 Checking
         #if car catch spot num 1
-        if (x > 284 and x < 289) and (y > 374 and y < 379) and (catch_spot_num_1==True):
+        if (x > 242 and x < 247) and (y > 214 and y < 217) and (catch_spot_num_1==True):
             print(spot1In)
             counterofspot1_in = counterofspot1_in + 1;#counter of changes of frames at spot parking
             if counterofspot1_in > 2:
               avialibalrparkingspot = avialibalrparkingspot - 1;
-              catch_spot_num_1 = False;
-              counterofspot1_in=0;
+              catch_spot_num_1 = False
+              counterofspot1_in=0
               cv2.putText(frame1, "Status: {}".format('Parking spot num 1 caught'), (10, 100),
                             cv2.FONT_HERSHEY_SIMPLEX,
                              0.6, (0, 0, 255), 1)
         ##if car leaving spot num 1
-        if (x > 284 and x < 289) and (y > 374 and y < 379)   and (catch_spot_num_1 == False):
+        if (x > 242 and x < 247) and (y > 214 and y < 217)  and (catch_spot_num_1 == False):
             print(spot1Out)
             counterofspot1_out = counterofspot1_out + 1;  # counter of changes of frames at spot parking
             if counterofspot1_out > 2:
                 avialibalrparkingspot = avialibalrparkingspot - 1;
-                counterofspot1_out=0;
                 catch_spot_num_1=True;
+                counterofspot1_out=0;
                 cv2.putText(frame1, "Status: {}".format('Parking spot num 1 is available to park'), (10, 100),
                                   cv2.FONT_HERSHEY_SIMPLEX,
                                   0.6, (0, 0, 255), 1)
 
         # Spots number 2 Checking
         # if car catch spot num 2
-        if (x > 320 and x < 325) and (y > 290 and y < 295) and (catch_spot_num_2 == True):
+        if (x > 213 and x < 218) and (y > 146 and y < 151) and (catch_spot_num_2 == True):
             print(spot2In)
             counterofspot2_in = counterofspot2_in + 1;  # counter of changes of frames at spot parking
             if counterofspot2_in > 2:
                 avialibalrparkingspot = avialibalrparkingspot - 1;
-                catch_spot_num_2 = False;
-                counterofspot2_in = 0;
+                catch_spot_num_2 = False
+                counterofspot2_in = 0
                 cv2.putText(frame1, "Status: {}".format('Parking spot num 2 caught'), (10, 100),
                             cv2.FONT_HERSHEY_SIMPLEX,
                             0.6, (0, 0, 255), 1)
         ##if car leaving spot num 2
-        if (x > 320 and x < 325) and (y > 290 and y < 295) and (catch_spot_num_2 == False):
+        if (x > 213 and x < 218) and (y > 146 and y < 151) and (catch_spot_num_2 == False):
             print(spot2Out)
             counterofspot2_out = counterofspot2_out + 1;  # counter of changes of frames at spot parking
             if counterofspot2_out > 2:
@@ -193,18 +178,18 @@ while cap.isOpened():
 
         # Spots number 3 Checking
         # if car catch spot num 3
-        if (x > 342 and x < 347) and (y > 253 and y < 258) and (catch_spot_num_3 == True):
+        if (x > 192 and x < 197) and (y > 88 and y < 93) and (catch_spot_num_3) == True:
             print(spot3In)
             counterofspot3_in = counterofspot3_in + 1;  # counter of changes of frames at spot parking
             if counterofspot3_in > 2:
                 avialibalrparkingspot = avialibalrparkingspot - 1;
-                catch_spot_num_3 = False;
+                catch_spot_num_3 = False
                 counterofspot3_in = 0
                 cv2.putText(frame1, "Status: {}".format('Parking spot num 3 caught'), (10, 100),
                             cv2.FONT_HERSHEY_SIMPLEX,
                             0.6, (0, 0, 255), 1)
         ##if car leaving spot num 3
-        if (x > 342 and x < 347) and (y > 253 and y < 258) and (catch_spot_num_3 == False):
+        if (x > 192 and x < 197) and (y > 88 and y < 93) and catch_spot_num_3 == False:
             print(spot3Out)
             counterofspot3_out = counterofspot3_out + 1;  # counter of changes of frames at spot parking
             if counterofspot3_out > 2:
@@ -217,18 +202,18 @@ while cap.isOpened():
 
         # Spots number 4 Checking
         # if car catch spot num 4
-        if (x > 362 and x < 367) and (y > 212 and y < 217) and (catch_spot_num_4 == True):
+        if (x > 188 and x < 193) and (y > 63 and y < 68) and (catch_spot_num_4 == True):
             print(spot4In)
             counterofspot4_in = counterofspot4_in + 1;  # counter of changes of frames at spot parking
             if counterofspot4_in > 2:
                 avialibalrparkingspot = avialibalrparkingspot - 1;
                 catch_spot_num_4 = False;
-                counterofspot4_in = 0;
+                counterofspot4_in = 0
                 cv2.putText(frame1, "Status: {}".format('Parking spot num 4 caught!'), (10, 100),
                             cv2.FONT_HERSHEY_SIMPLEX,
                             0.6, (0, 0, 255), 1)
         ##if car leaving spot num 4
-        if (x > 362 and x < 367) and (y > 212 and y < 217)   and (catch_spot_num_4 == False):
+        if (x > 188 and x < 193) and (y > 63 and y < 68)  and (catch_spot_num_4 == False):
             print(spot4Out)
             counterofspot4_out = counterofspot4_out + 1;  # counter of changes of frames at spot parking
             if counterofspot4_out > 2:
@@ -241,7 +226,7 @@ while cap.isOpened():
 
         # Spots number 5 Checking
         # if car catch spot num 5
-        if (x > 114 and x < 119) and (y > 423 and y < 428) and (catch_spot_num_5 == True):
+        if (x > 180 and x < 185) and (y > 32 and y < 37) and (catch_spot_num_5 == True):
             print(spot5In)
             counterofspot5_in = counterofspot5_in + 1;  # counter of changes of frames at spot parking
             if counterofspot5_in > 2:
@@ -252,7 +237,7 @@ while cap.isOpened():
                             cv2.FONT_HERSHEY_SIMPLEX,
                             0.6, (0, 0, 255), 1)
         ##if car leaving spot num 5
-        if (x > 114 and x < 119) and (y > 423 and y < 428) and (catch_spot_num_5 == False):
+        if (x > 180 and x < 185) and (y > 32 and y < 37)  and (catch_spot_num_5 == False):
             print(spot5Out)
             counterofspot5_out = counterofspot5_out + 1;  # counter of changes of frames at spot parking
             if counterofspot5_out > 2:
@@ -265,7 +250,7 @@ while cap.isOpened():
 
         # Spots number 6 Checking
         # if car catch spot num 6
-        if (x > 174 and x < 179) and (y > 314 and y < 319) and (catch_spot_num_6 == True):
+        if (x > 178 and x < 183) and (y > 7 and y < 12) and (catch_spot_num_6 == True):
             print(spot6In)
             counterofspot6_in = counterofspot6_in + 1;  # counter of changes of frames at spot parking
             if counterofspot6_in > 2:
@@ -276,7 +261,7 @@ while cap.isOpened():
                             cv2.FONT_HERSHEY_SIMPLEX,
                             0.6, (0, 0, 255), 1)
         ##if car leaving spot num 6
-        if (x > 174 and x < 179) and (y > 314 and y < 319) and (catch_spot_num_6 == False):
+        if (x > 178 and x < 183) and (y > 7 and y < 12) and (catch_spot_num_6 == False):
             print(spot6Out)
             counterofspot6_out = counterofspot6_out + 1;  # counter of changes of frames at spot parking
             if counterofspot6_out > 2:
@@ -289,7 +274,7 @@ while cap.isOpened():
 
         # Spots number 7 Checking
         # if car catch spot num 7
-        if (x > 263 and x < 268) and (y > 248 and y < 253) and (catch_spot_num_7 == True):
+        if (x > 420 and x < 425) and (y > 312 and y < 317) and (catch_spot_num_7 == True):
             print(spot7In)
             counterofspot7_in = counterofspot7_in + 1;  # counter of changes of frames at spot parking
             if counterofspot7_in > 2:
@@ -300,7 +285,7 @@ while cap.isOpened():
                             cv2.FONT_HERSHEY_SIMPLEX,
                             0.6, (0, 0, 255), 1)
         ##if car leaving spot num 7
-        if (x > 263 and x < 268) and (y > 248 and y < 253) and (catch_spot_num_7 == False):
+        if (x > 420 and x < 425) and (y > 312 and y < 317) and (catch_spot_num_7 == False):
             print(spot7Out)
             counterofspot7_out = counterofspot7_out + 1;  # counter of changes of frames at spot parking
             if counterofspot7_out > 2:
@@ -313,7 +298,7 @@ while cap.isOpened():
 
         # Spots number 8 Checking
         # if car catch spot num 8
-        if (x > 290 and x < 305) and (y > 182 and y < 187) and (catch_spot_num_8 == True):
+        if (x > 502 and x < 507) and (y > 415 and y <420 ) and (catch_spot_num_8 == True):
             print(spot8In)
             counterofspot8_in = counterofspot8_in + 1;  # counter of changes of frames at spot parking
             if counterofspot8_in > 2:
@@ -324,7 +309,7 @@ while cap.isOpened():
                             cv2.FONT_HERSHEY_SIMPLEX,
                             0.6, (0, 0, 255), 1)
         ##if car leaving spot num 8
-        if (x > 290 and x < 305) and (y > 182 and y < 187)  and (catch_spot_num_8 == False):
+        if (x > 502 and x < 507) and (y > 415 and y <420 )  and (catch_spot_num_8 == False):
             print(spot8Out)
             counterofspot8_out = counterofspot8_out + 1;  # counter of changes of frames at spot parking
             if counterofspot8_out > 2:
@@ -335,112 +320,13 @@ while cap.isOpened():
                             cv2.FONT_HERSHEY_SIMPLEX,
                             0.6, (0, 0, 255), 1)
 
-        # Spots number 9 Checking
-        # if car catch spot num 9
-        if (x > 390 and x < 393) and (y > 170 and y < 175) and (catch_spot_num_9 == True):
-            print(spot9In)
-            counterofspot9_in = counterofspot9_in + 1;  # counter of changes of frames at spot parking
-            if counterofspot9_in > 2:
-                avialibalrparkingspot = avialibalrparkingspot - 1;
-                catch_spot_num_8 = False;
-                counterofspot9_in = 0
-                cv2.putText(frame1, "Status: {}".format('Parking spot num 9 caught!'), (10, 100),
-                            cv2.FONT_HERSHEY_SIMPLEX,
-                            0.6, (0, 0, 255), 1)
-        ##if car leaving spot num 9
-        if (x > 390 and x < 393) and (y > 170 and y < 175)  and (catch_spot_num_8 == False):
-            print(spot9Out)
-            counterofspot9_out = counterofspot9_out + 1;  # counter of changes of frames at spot parking
-            if counterofspot9_out > 2:
-                avialibalrparkingspot = avialibalrparkingspot - 1;
-                counterofspot9_out = 0;
-                catch_spot_num_8=True;
-                cv2.putText(frame1, "Status: {}".format('Parking spot num 9 is available to park'), (10, 100),
-                            cv2.FONT_HERSHEY_SIMPLEX,
-                            0.6, (0, 0, 255), 1)
 
-        # Spots number 10 Checking
-        # if car catch spot num 10
-        if (x > 400 and x < 405) and (y > 152 and y < 157) and (catch_spot_num_10 == True):
-            print(spot10In)
-            counterofspot10_in = counterofspot10_in + 1;  # counter of changes of frames at spot parking
-            if counterofspot10_in > 2:
-                avialibalrparkingspot = avialibalrparkingspot - 1;
-                catch_spot_num_10 = False;
-                counterofspot10_in = 0
-                cv2.putText(frame1, "Status: {}".format('Parking spot num 10 caught!'), (10, 100),
-                            cv2.FONT_HERSHEY_SIMPLEX,
-                            0.6, (0, 0, 255), 2)
-        ##if car leaving spot num 10
-        if (x > 400 and x < 405) and (y > 152 and y < 157)  and (catch_spot_num_10 == False):
-            print(spot10Out)
-            counterofspot10_out = counterofspot10_out + 1;  # counter of changes of frames at spot parking
-            if counterofspot10_out > 2:
-                avialibalrparkingspot = avialibalrparkingspot - 1;
-                counterofspot10_out = 0;
-                catch_spot_num_10=True;
-                cv2.putText(frame1, "Status: {}".format('Parking spot num 10 is available to park'), (10, 100),
-                            cv2.FONT_HERSHEY_SIMPLEX,
-                            0.6, (0, 0, 255), 2)
-
-        # Spots number 11 Checking
-        # if car catch spot num 11
-        if (x > 400 and x < 405) and (y > 152 and y < 157) and (catch_spot_num_11 == True):
-            print(spot11In)
-            counterofspot11_in = counterofspot11_in + 1;  # counter of changes of frames at spot parking
-            if counterofspot11_in > 2:
-                avialibalrparkingspot = avialibalrparkingspot - 1;
-                catch_spot_num_11 = False;
-                counterofspot11_in = 0
-                cv2.putText(frame1, "Status: {}".format('Parking spot num 11 caught!'), (10, 100),
-                            cv2.FONT_HERSHEY_SIMPLEX,
-                            0.6, (0, 0, 255), 2)
-        ##if car leaving spot num 11
-        if (x > 400 and x < 405) and (y > 152 and y < 157)  and (catch_spot_num_11 == False):
-            print(spot11Out)
-            counterofspot11_out = counterofspot11_out + 1;  # counter of changes of frames at spot parking
-            if counterofspot11_out > 2:
-                avialibalrparkingspot = avialibalrparkingspot - 1;
-                counterofspot11_out = 0;
-                catch_spot_num_11=True;
-                cv2.putText(frame1, "Status: {}".format('Parking spot num 11 is available to park'), (10, 100),
-                            cv2.FONT_HERSHEY_SIMPLEX,
-                            0.6, (0, 0, 255), 2)
-
-        # Spots number 12 Checking
-        # if car catch spot num 12
-        if (x > 400 and x < 405) and (y > 152 and y < 157) and (catch_spot_num_11 == True):
-            print(spot12In)
-            counterofspot12_in = counterofspot12_in + 1;  # counter of changes of frames at spot parking
-            if counterofspot12_in > 2:
-                avialibalrparkingspot = avialibalrparkingspot - 1;
-                catch_spot_num_12 = False;
-                counterofspot12_in = 0
-                cv2.putText(frame1, "Status: {}".format('Parking spot num 12 caught!'), (10, 100),
-                            cv2.FONT_HERSHEY_SIMPLEX,
-                            0.6, (0, 0, 255), 2)
-        ##if car leaving spot num 12
-        if (x > 400 and x < 405) and (y > 152 and y < 157)  and (catch_spot_num_12 == False):
-            print(spot12Out)
-            counterofspot12_out = counterofspot12_out + 1;  # counter of changes of frames at spot parking
-            if counterofspot12_out > 2:
-                avialibalrparkingspot = avialibalrparkingspot - 1;
-                counterofspot12_out = 0;
-                catch_spot_num_12=True;
-                cv2.putText(frame1, "Status: {}".format('Parking spot num 12 is available to park'), (10, 100),
-                            cv2.FONT_HERSHEY_SIMPLEX,
-                            0.6, (0, 0, 255), 2)
-
-        #if car leaving parking lot
-        if (x>119 and x<130) and (y>440 and y<452):
-            print(outallert)
-            #counter1=counter1+1;
-            #if counter1<2:
-               # avialibalrparkingspot=avialibalrparkingspot-1;
-            cv2.putText(frame1, "Status: {}".format('Car leaving parking lot!'), (50, 370), cv2.FONT_HERSHEY_SIMPLEX,
-                        1, (0, 0, 255), 3)
-            Exitparking=True;
-
+        if (x>420 and x<510) and (y>419 and y<479):
+            if cv2.contourArea(contour) > 2000:  # number is the area of the rectangle
+             print(outallert)
+             cv2.putText(frame1, "Status: {}".format('Car/s leaving from parking spot!'), (50, 370), cv2.FONT_HERSHEY_SIMPLEX,
+                        0.8, (0, 0, 255), 3)
+             Exitparking=True;
 
     #cv2.drawContours(frame1, contours, -1, (0, 255, 0), 2)
 
